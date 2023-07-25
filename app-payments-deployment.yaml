@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: app-payments
+  name: app-payments
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: app-payments
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.26.0 (40646f47)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: app-payments
+    spec:
+      containers:
+        - args:
+            - yarn
+            - start:dev
+            - payments
+          image: thiagorm28/nestjs-kafka-app
+          name: app-payments
+          ports:
+            - containerPort: 3001
+          resources: {}
+          volumeMounts:
+            - mountPath: /home/node/app
+              name: app-payments-claim0
+      restartPolicy: Always
+      volumes:
+        - name: app-payments-claim0
+          persistentVolumeClaim:
+            claimName: app-payments-claim0
+status: {}
